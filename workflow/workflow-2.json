@@ -1,0 +1,1646 @@
+{
+  "id": "99456ad4-9b43-4443-8419-0973f786b578",
+  "revision": 0,
+  "last_node_id": 11,
+  "last_link_id": 13,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "IndexTTS25BaseNode",
+      "pos": [
+        1817.5408943789648,
+        67.01287289768771
+      ],
+      "size": [
+        400,
+        464
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "reference_audio",
+          "name": "reference_audio",
+          "type": "AUDIO",
+          "link": 3
+        },
+        {
+          "label": "cache_control",
+          "name": "cache_control",
+          "shape": 7,
+          "type": "DICT",
+          "link": 1
+        },
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "label": "lang",
+          "name": "lang",
+          "type": "COMBO",
+          "widget": {
+            "name": "lang"
+          },
+          "link": null
+        },
+        {
+          "label": "duration_factor",
+          "name": "duration_factor",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration_factor"
+          },
+          "link": null
+        },
+        {
+          "label": "mode",
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": null
+        },
+        {
+          "label": "do_sample_mode",
+          "name": "do_sample_mode",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "do_sample_mode"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "num_beams",
+          "name": "num_beams",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "num_beams"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "length_penalty",
+          "name": "length_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "length_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "max_mel_tokens",
+          "name": "max_mel_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_mel_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "max_tokens_per_sentence",
+          "name": "max_tokens_per_sentence",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_tokens_per_sentence"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            6
+          ]
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "label": "subtitle",
+          "name": "subtitle",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "maikarlone/comfyui-index-tts25",
+        "ver": "271109f97580711531805c443dbbcb04092ed1e5",
+        "Node name for S&R": "IndexTTS25BaseNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Hello, this is IndexTTS 2.5.",
+        "ZH",
+        1,
+        "Auto",
+        "on",
+        0.8,
+        0.9,
+        30,
+        3,
+        10,
+        0,
+        1815,
+        120,
+        0,
+        "randomize"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "IndexTTS25CacheControlNode",
+      "pos": [
+        1368.9379615066953,
+        306.11595894635934
+      ],
+      "size": [
+        300.6783203125,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "keep_models_cached",
+          "name": "keep_models_cached",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "keep_models_cached"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "cache_control",
+          "name": "cache_control",
+          "type": "DICT",
+          "links": [
+            1,
+            2,
+            11,
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "maikarlone/comfyui-index-tts25",
+        "ver": "271109f97580711531805c443dbbcb04092ed1e5",
+        "Node name for S&R": "IndexTTS25CacheControlNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        false
+      ]
+    },
+    {
+      "id": 2,
+      "type": "IndexTTS25EmotionTextNode",
+      "pos": [
+        2386.0750148065554,
+        37.40949468505032
+      ],
+      "size": [
+        400,
+        542
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "reference_audio",
+          "name": "reference_audio",
+          "type": "AUDIO",
+          "link": 4
+        },
+        {
+          "label": "cache_control",
+          "name": "cache_control",
+          "shape": 7,
+          "type": "DICT",
+          "link": 2
+        },
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "label": "lang",
+          "name": "lang",
+          "type": "COMBO",
+          "widget": {
+            "name": "lang"
+          },
+          "link": null
+        },
+        {
+          "label": "duration_factor",
+          "name": "duration_factor",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration_factor"
+          },
+          "link": null
+        },
+        {
+          "label": "mode",
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": null
+        },
+        {
+          "label": "do_sample_mode",
+          "name": "do_sample_mode",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "do_sample_mode"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "num_beams",
+          "name": "num_beams",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "num_beams"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "length_penalty",
+          "name": "length_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "length_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "max_mel_tokens",
+          "name": "max_mel_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_mel_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "max_tokens_per_sentence",
+          "name": "max_tokens_per_sentence",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_tokens_per_sentence"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "label": "emotion_description",
+          "name": "emotion_description",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "emotion_description"
+          },
+          "link": null
+        },
+        {
+          "label": "emotion_weight",
+          "name": "emotion_weight",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "emotion_weight"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            7
+          ]
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "label": "subtitle",
+          "name": "subtitle",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "maikarlone/comfyui-index-tts25",
+        "ver": "271109f97580711531805c443dbbcb04092ed1e5",
+        "Node name for S&R": "IndexTTS25EmotionTextNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Hello, this is IndexTTS 2.5.",
+        "ZH",
+        1,
+        "Auto",
+        "on",
+        0.8,
+        0.9,
+        30,
+        3,
+        10,
+        0,
+        1815,
+        120,
+        0,
+        "randomize",
+        "",
+        0.6
+      ]
+    },
+    {
+      "id": 7,
+      "type": "SaveAudioMP3",
+      "pos": [
+        1867.4122591963176,
+        -278.35824560368945
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 6
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "label": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        },
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "320k"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "SaveAudioMP3",
+      "pos": [
+        2451.8865853604852,
+        -292.7803422993612
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 7
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "label": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        },
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "320k"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "SaveAudioMP3",
+      "pos": [
+        3652.7155101744133,
+        -304.1661514194375
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 9
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "label": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        },
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "320k"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "LoadAudio",
+      "pos": [
+        1363.3983202707905,
+        48.79549491302695
+      ],
+      "size": [
+        315,
+        136
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        },
+        {
+          "label": "upload",
+          "name": "upload",
+          "type": "AUDIOUPLOAD",
+          "widget": {
+            "name": "upload"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "AUDIO",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            3,
+            4,
+            5,
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.30.0",
+        "Node name for S&R": "LoadAudio",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "003.wav",
+        null,
+        null
+      ],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 4,
+      "type": "IndexTTS25EmotionVectorNode",
+      "pos": [
+        3022.164944120872,
+        22.98751960349705
+      ],
+      "size": [
+        400,
+        656
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "reference_audio",
+          "name": "reference_audio",
+          "type": "AUDIO",
+          "link": 5
+        },
+        {
+          "label": "cache_control",
+          "name": "cache_control",
+          "shape": 7,
+          "type": "DICT",
+          "link": 11
+        },
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": null
+        },
+        {
+          "label": "lang",
+          "name": "lang",
+          "type": "COMBO",
+          "widget": {
+            "name": "lang"
+          },
+          "link": null
+        },
+        {
+          "label": "duration_factor",
+          "name": "duration_factor",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration_factor"
+          },
+          "link": null
+        },
+        {
+          "label": "mode",
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": null
+        },
+        {
+          "label": "do_sample_mode",
+          "name": "do_sample_mode",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "do_sample_mode"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "num_beams",
+          "name": "num_beams",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "num_beams"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "length_penalty",
+          "name": "length_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "length_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "max_mel_tokens",
+          "name": "max_mel_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_mel_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "max_tokens_per_sentence",
+          "name": "max_tokens_per_sentence",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_tokens_per_sentence"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        },
+        {
+          "label": "Happy",
+          "name": "Happy",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Happy"
+          },
+          "link": null
+        },
+        {
+          "label": "Angry",
+          "name": "Angry",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Angry"
+          },
+          "link": null
+        },
+        {
+          "label": "Sad",
+          "name": "Sad",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Sad"
+          },
+          "link": null
+        },
+        {
+          "label": "Fear",
+          "name": "Fear",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Fear"
+          },
+          "link": null
+        },
+        {
+          "label": "Hate",
+          "name": "Hate",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Hate"
+          },
+          "link": null
+        },
+        {
+          "label": "Love",
+          "name": "Love",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Love"
+          },
+          "link": null
+        },
+        {
+          "label": "Surprise",
+          "name": "Surprise",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Surprise"
+          },
+          "link": null
+        },
+        {
+          "label": "Neutral",
+          "name": "Neutral",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "Neutral"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            8
+          ]
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "label": "subtitle",
+          "name": "subtitle",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "maikarlone/comfyui-index-tts25",
+        "ver": "271109f97580711531805c443dbbcb04092ed1e5",
+        "Node name for S&R": "IndexTTS25EmotionVectorNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Hello, this is IndexTTS 2.5.",
+        "ZH",
+        1,
+        "Auto",
+        "on",
+        0.8,
+        0.9,
+        30,
+        3,
+        10,
+        0,
+        1815,
+        120,
+        0,
+        "randomize",
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": 11,
+      "type": "LoadAudio",
+      "pos": [
+        3045.211536747456,
+        -562.2532107435068
+      ],
+      "size": [
+        315,
+        136
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "COMBO",
+          "widget": {
+            "name": "audio"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        },
+        {
+          "label": "upload",
+          "name": "upload",
+          "type": "AUDIOUPLOAD",
+          "widget": {
+            "name": "upload"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "AUDIO",
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.30.0",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "003.wav",
+        null,
+        null
+      ],
+      "color": "#332922",
+      "bgcolor": "#593930"
+    },
+    {
+      "id": 5,
+      "type": "IndexTTS25ProNode",
+      "pos": [
+        3580.005500364181,
+        40.3927293176022
+      ],
+      "size": [
+        400,
+        588
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "narrator_audio",
+          "name": "narrator_audio",
+          "type": "AUDIO",
+          "link": 10
+        },
+        {
+          "label": "character1_audio",
+          "name": "character1_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 13
+        },
+        {
+          "label": "character2_audio",
+          "name": "character2_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "character3_audio",
+          "name": "character3_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "character4_audio",
+          "name": "character4_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "character5_audio",
+          "name": "character5_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "emotion_audio",
+          "name": "emotion_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "label": "cache_control",
+          "name": "cache_control",
+          "shape": 7,
+          "type": "DICT",
+          "link": 12
+        },
+        {
+          "label": "structured_text",
+          "name": "structured_text",
+          "type": "STRING",
+          "widget": {
+            "name": "structured_text"
+          },
+          "link": null
+        },
+        {
+          "label": "lang",
+          "name": "lang",
+          "type": "COMBO",
+          "widget": {
+            "name": "lang"
+          },
+          "link": null
+        },
+        {
+          "label": "duration_factor",
+          "name": "duration_factor",
+          "type": "FLOAT",
+          "widget": {
+            "name": "duration_factor"
+          },
+          "link": null
+        },
+        {
+          "label": "mode",
+          "name": "mode",
+          "type": "COMBO",
+          "widget": {
+            "name": "mode"
+          },
+          "link": null
+        },
+        {
+          "label": "emotion_weight",
+          "name": "emotion_weight",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "emotion_weight"
+          },
+          "link": null
+        },
+        {
+          "label": "do_sample_mode",
+          "name": "do_sample_mode",
+          "shape": 7,
+          "type": "COMBO",
+          "widget": {
+            "name": "do_sample_mode"
+          },
+          "link": null
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          },
+          "link": null
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          },
+          "link": null
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          },
+          "link": null
+        },
+        {
+          "label": "num_beams",
+          "name": "num_beams",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "num_beams"
+          },
+          "link": null
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "length_penalty",
+          "name": "length_penalty",
+          "shape": 7,
+          "type": "FLOAT",
+          "widget": {
+            "name": "length_penalty"
+          },
+          "link": null
+        },
+        {
+          "label": "max_mel_tokens",
+          "name": "max_mel_tokens",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_mel_tokens"
+          },
+          "link": null
+        },
+        {
+          "label": "max_tokens_per_sentence",
+          "name": "max_tokens_per_sentence",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "max_tokens_per_sentence"
+          },
+          "link": null
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "shape": 7,
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            9
+          ]
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "label": "Subtitle",
+          "name": "Subtitle",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "label": "SimplifiedSubtitle",
+          "name": "SimplifiedSubtitle",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "maikarlone/comfyui-index-tts25",
+        "ver": "271109f97580711531805c443dbbcb04092ed1e5",
+        "Node name for S&R": "IndexTTS25ProNode",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "<Narrator>这是一段旁白文本。<Character1>你好，我是角色1。<Narrator>他说道。",
+        "ZH",
+        1,
+        "Auto",
+        0.8,
+        "on",
+        0.8,
+        0.9,
+        30,
+        3,
+        10,
+        0,
+        1815,
+        120,
+        0,
+        "randomize"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "SaveAudioMP3",
+      "pos": [
+        3068.605462076158,
+        -294.33635880846487
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 8
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          },
+          "link": null
+        },
+        {
+          "label": "quality",
+          "name": "quality",
+          "type": "COMBO",
+          "widget": {
+            "name": "quality"
+          },
+          "link": null
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.40",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        },
+        "Node name for S&R": "SaveAudioMP3"
+      },
+      "widgets_values": [
+        "audio/ComfyUI",
+        "320k"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      3,
+      0,
+      1,
+      1,
+      "DICT"
+    ],
+    [
+      2,
+      3,
+      0,
+      2,
+      1,
+      "DICT"
+    ],
+    [
+      3,
+      6,
+      0,
+      1,
+      0,
+      "AUDIO"
+    ],
+    [
+      4,
+      6,
+      0,
+      2,
+      0,
+      "AUDIO"
+    ],
+    [
+      5,
+      6,
+      0,
+      4,
+      0,
+      "AUDIO"
+    ],
+    [
+      6,
+      1,
+      0,
+      7,
+      0,
+      "AUDIO"
+    ],
+    [
+      7,
+      2,
+      0,
+      8,
+      0,
+      "AUDIO"
+    ],
+    [
+      8,
+      4,
+      0,
+      9,
+      0,
+      "AUDIO"
+    ],
+    [
+      9,
+      5,
+      0,
+      10,
+      0,
+      "AUDIO"
+    ],
+    [
+      10,
+      6,
+      0,
+      5,
+      0,
+      "AUDIO"
+    ],
+    [
+      11,
+      3,
+      0,
+      4,
+      1,
+      "DICT"
+    ],
+    [
+      12,
+      3,
+      0,
+      5,
+      7,
+      "DICT"
+    ],
+    [
+      13,
+      11,
+      0,
+      5,
+      1,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.7258531116279109,
+      "offset": [
+        -698.5475261692337,
+        1007.7061954850557
+      ]
+    },
+    "frontendVersion": "1.47.11",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
