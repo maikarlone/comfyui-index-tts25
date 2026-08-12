@@ -1,0 +1,58 @@
+IndexTTS-2.5 Model Path Guide
+=============================
+
+Install all weights under:
+
+  ComfyUI/models/IndexTTS-2.5/
+
+Download:
+
+  python TTS25_download.py
+
+  # or
+  hf download IndexTeam/IndexTTS-2.5 --local-dir .../ComfyUI/models/IndexTTS-2.5
+  modelscope download --model IndexTeam/IndexTTS-2.5 --local_dir ...
+
+Required (validated by the loader):
+
+  config.yaml
+  gpt.pth
+  s2mel.pth
+  codec.pth                         # native 2.5 codec (not Amphion MaskGCT)
+  feat1.pt                          # speaker matrix
+  feat2.pt                          # emotion matrix
+  wav2vec2bert_stats.pt
+  multilingual_zh_ja_yue_char_del.tiktoken
+
+Recommended:
+
+  bpe.model
+  pinyin.vocab
+  qwen0.6bemo4-merge/               # required for Emotion Text node
+  glossary.yaml                     # optional
+
+Auxiliary models (auto-downloaded into hf_cache/ on first run):
+
+  hf_cache/w2v-bert-2.0/
+  hf_cache/campplus_cn_common.bin
+  hf_cache/bigvgan/config.json
+  hf_cache/bigvgan/bigvgan_generator.pt
+
+Example tree:
+
+ComfyUI/models/IndexTTS-2.5/
+├── config.yaml
+├── gpt.pth
+├── s2mel.pth
+├── codec.pth
+├── feat1.pt
+├── feat2.pt
+├── wav2vec2bert_stats.pt
+├── multilingual_zh_ja_yue_char_del.tiktoken
+├── bpe.model
+├── pinyin.vocab
+├── qwen0.6bemo4-merge/
+└── hf_cache/
+    ├── w2v-bert-2.0/
+    ├── campplus_cn_common.bin
+    └── bigvgan/

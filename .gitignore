@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv/
+venv/
+ENV/
+.idea/
+.vscode/
+*.egg-info/
+.dist/
+build/
+dist/
+*.log
+.DS_Store
+Thumbs.db
+hf_cache/
+*.pt
+*.pth
+*.safetensors
+*.bin
+# Local reference voices (may include copyrighted samples); keep folder only
+TimbreModel/*
+!TimbreModel/.gitkeep
+!.gitkeep

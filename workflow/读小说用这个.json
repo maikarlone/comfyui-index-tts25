@@ -1,0 +1,449 @@
+{
+  "id": "9a68dd3b-2325-410c-a6f9-dd809511c4c4",
+  "revision": 0,
+  "last_node_id": 465,
+  "last_link_id": 482,
+  "nodes": [
+    {
+      "id": 455,
+      "type": "IndexTTSProNode",
+      "pos": [
+        1131.8665771484375,
+        -740.8927001953125
+      ],
+      "size": [
+        400,
+        476
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "narrator_audio",
+          "type": "AUDIO",
+          "link": 478
+        },
+        {
+          "name": "character1_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 479
+        },
+        {
+          "name": "character2_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 480
+        },
+        {
+          "name": "character3_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "name": "character4_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "name": "character5_audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": null
+        },
+        {
+          "name": "structured_text",
+          "type": "STRING",
+          "widget": {
+            "name": "structured_text"
+          },
+          "link": 482
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            477
+          ]
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "chenpipi0807/ComfyUI-Index-TTS",
+        "ver": "074b8a838b84d57500b38167a5dbb72d99965e32",
+        "Node name for S&R": "IndexTTSProNode"
+      },
+      "widgets_values": [
+        "<正文>这是一段正文示例。<角色1>你好。<正文>他说道。",
+        "IndexTTS-1.5",
+        "auto",
+        1,
+        2603958371,
+        "randomize",
+        1,
+        0.8,
+        30,
+        10,
+        0,
+        3,
+        600,
+        [
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": 457,
+      "type": "NovelTextStructureNode",
+      "pos": [
+        -228.7899627685547,
+        -766.8822021484375
+      ],
+      "size": [
+        448.1485900878906,
+        391.1784973144531
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "structured_text",
+          "type": "STRING",
+          "links": [
+            472
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "chenpipi0807/ComfyUI-Index-TTS",
+        "ver": "074b8a838b84d57500b38167a5dbb72d99965e32",
+        "Node name for S&R": "NovelTextStructureNode"
+      },
+      "widgets_values": [
+        "少女此时就站在院墙那边，她有一双杏眼，怯怯弱弱。\n\n院门那边，有个嗓音说：“你这婢女卖不卖？”\n\n宋集薪愣了愣，循着声音转头望去，是个眉眼含笑的锦衣少年，站在院外，一张全然陌生的面孔。\n\n锦衣少年身边站着一位身材高大的老者，面容白皙，脸色和蔼，轻轻眯眼打量着两座毗邻院落的少年少女。\n\n老者的视线在陈平安一扫而过，并无停滞，但是在宋集薪和婢女身上，多有停留，笑意渐渐浓郁。\n\n宋集薪斜眼道：“卖！怎么不卖！”\n\n那少年微笑道：“那你说个价。”\n\n少女瞪大眼眸，满脸匪夷所思，像一头惊慌失措的年幼麋鹿。\n\n宋集薪翻了个白眼，伸出一根手指，晃了晃，“白银一万两！”\n\n锦衣少年脸色如常，点头道：“好。”\n\n宋集薪见那少年不像是开玩笑的样子，连忙改口道：“是黄金万两！”\n\n锦衣少年嘴角翘起，道：“逗你玩的。”\n\n宋集薪脸色阴沉。",
+        [
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": 458,
+      "type": "easy showAnything",
+      "pos": [
+        -239.69430541992188,
+        -316.8822326660156
+      ],
+      "size": [
+        450.1573486328125,
+        237.9201202392578
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 472
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "2986a014694fd27049c3f66d39e3f60904283f9b",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "<Narrator>少女此时就站在院墙那边，她有一双杏眼，怯怯弱弱。<Narrator>院门那边，有个嗓音说：<Character1>你这婢女卖不卖？<Narrator>宋集薪愣了愣，循着声音转头望去，是个眉眼含笑的锦衣少年，站在院外，一张全然陌生的面孔。<Narrator>锦衣少年身边站着一位身材高大的老者，面容白皙，脸色和蔼，轻轻眯眼打量着两座毗邻院落的少年少女。<Narrator>老者的视线在陈平安一扫而过，并无停滞，但是在宋集薪和婢女身上，多有停留，笑意渐渐浓郁。<Narrator>宋集薪斜眼道：<Character1>卖！怎么不卖！<Narrator>那少年微笑道：<Character1>那你说个价。<Narrator>少女瞪大眼眸，满脸匪夷所思，像一头惊慌失措的年幼麋鹿。<Narrator>宋集薪翻了个白眼，伸出一根手指，晃了晃，“白银一万两！”<Narrator>锦衣少年脸色如常，点头道：<Character1>好。<Narrator>宋集薪见那少年不像是开玩笑的样子，连忙改口道：<Character1>是黄金万两！<Narrator>锦衣少年嘴角翘起，道：<Character1>逗你玩的。<Narrator>宋集薪脸色阴沉。"
+      ]
+    },
+    {
+      "id": 459,
+      "type": "LoadAudio",
+      "pos": [
+        749.822265625,
+        -520.6138916015625
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            479
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.32",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "凡人修仙传-紫灵.mp3",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 460,
+      "type": "LoadAudio",
+      "pos": [
+        744.0565795898438,
+        -308.4060974121094
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            480
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.32",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "恋与深空-秦彻.WAV",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 461,
+      "type": "LoadAudio",
+      "pos": [
+        749.5767211914062,
+        -742.494140625
+      ],
+      "size": [
+        270,
+        136
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            478
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.32",
+        "Node name for S&R": "LoadAudio"
+      },
+      "widgets_values": [
+        "御姐配音.wav",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 462,
+      "type": "SaveAudio",
+      "pos": [
+        1585.802978515625,
+        -739.2282104492188
+      ],
+      "size": [
+        270,
+        112
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 477
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.32",
+        "Node name for S&R": "SaveAudio"
+      },
+      "widgets_values": [
+        "audio/ComfyUI"
+      ]
+    },
+    {
+      "id": 465,
+      "type": "String Literal",
+      "pos": [
+        269.1800231933594,
+        -755.8568725585938
+      ],
+      "size": [
+        441.81292724609375,
+        636.3744506835938
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            482
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-image-saver",
+        "ver": "65e6903eff274a50f8b5cd768f0f96baf37baea1",
+        "Node name for S&R": "String Literal"
+      },
+      "widgets_values": [
+        "<Narrator>少女此时就站在院墙那边，她有一双杏眼，怯怯弱弱。</Narrator>\n<Narrator>院门那边，有个嗓音说：</Narrator>\n<Character1>“你这婢女卖不卖？”</Character1>\n<Narrator>宋集薪愣了愣，循着声音转头望去，是个眉眼含笑的锦衣少年，站在院外，一张全然陌生的面孔。</Narrator>\n<Narrator>锦衣少年身边站着一位身材高大的老者，面容白皙，脸色和蔼，轻轻眯眼打量着两座毗邻院落的少年少女。</Narrator>\n<Narrator>老者的视线在陈平安一扫而过，并无停滞，但是在宋集薪和婢女身上，多有停留，笑意渐渐浓郁。</Narrator>\n<Narrator>宋集薪斜眼道：</Narrator>\n<Character2>“卖！怎么不卖！”</Character2>\n<Narrator>那少年微笑道：</Narrator>\n<Character1>“那你说个价。”</Character1>\n<Narrator>少女瞪大眼眸，满脸匪夷所思，像一头惊慌失措的年幼麋鹿。</Narrator>\n<Narrator>宋集薪翻了个白眼，伸出一根手指，晃了晃，</Narrator>\n<Character2>“白银一万两！”</Character2>\n<Narrator>锦衣少年脸色如常，点头道：</Narrator>\n<Character1>“好。”</Character1>\n<Narrator>宋集薪见那少年不像是开玩笑的样子，连忙改口道：</Narrator>\n<Character2>“是黄金万两！”</Character2>\n<Narrator>锦衣少年嘴角翘起，道：</Narrator>\n<Character1>“逗你玩的。”</Character1>\n<Narrator>宋集薪脸色阴沉。</Narrator>",
+        [
+          false,
+          true
+        ]
+      ]
+    }
+  ],
+  "links": [
+    [
+      472,
+      457,
+      0,
+      458,
+      0,
+      "*"
+    ],
+    [
+      477,
+      455,
+      0,
+      462,
+      0,
+      "AUDIO"
+    ],
+    [
+      478,
+      461,
+      0,
+      455,
+      0,
+      "AUDIO"
+    ],
+    [
+      479,
+      459,
+      0,
+      455,
+      1,
+      "AUDIO"
+    ],
+    [
+      480,
+      460,
+      0,
+      455,
+      2,
+      "AUDIO"
+    ],
+    [
+      482,
+      465,
+      0,
+      455,
+      6,
+      "STRING"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 1,
+      "title": "结构化拆分/效果一般建议自己找llm拆",
+      "bounding": [
+        -249.69430541992188,
+        -840.482177734375,
+        470.69024658203125,
+        789.765869140625
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 2,
+      "title": "读小说的核心节点示例",
+      "bounding": [
+        259.1800231933594,
+        -829.4568481445312,
+        1606.622802734375,
+        719.9744262695312
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.45,
+      "offset": [
+        605.575463349528,
+        1101.479062506663
+      ]
+    },
+    "frontendVersion": "1.18.9",
+    "ue_links": [],
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

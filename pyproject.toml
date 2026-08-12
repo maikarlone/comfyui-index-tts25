@@ -1,0 +1,36 @@
+[project]
+name = "comfyui-index-tts25"
+description = "ComfyUI custom nodes for IndexTTS-2.5: multilingual zero-shot TTS with emotion and speaking-speed control."
+version = "2.5.0"
+dependencies = [
+  "torch>=2.0.0",
+  "torchaudio>=2.0.0",
+  "numpy>=1.20.0",
+  "scipy>=1.7.0",
+  "librosa>=0.10.0",
+  "soundfile>=0.10.0",
+  "omegaconf>=2.3.0",
+  "transformers>=4.50.0",
+  "huggingface_hub>=0.23.0",
+  "safetensors>=0.4.3",
+  "modelscope>=1.13.0",
+  "einops",
+  "fugashi>=1.2.0",
+  "unidic-lite>=1.0.0",
+  "g2p-en>=2.1.0",
+  "cn2an>=0.5.22",
+  "sentencepiece>=0.2.0",
+  "tiktoken>=0.7.0",
+  "openai-whisper>=20231117",
+  "wetext",
+]
+
+[project.urls]
+Repository = "https://github.com/maikarlone/comfyui-index-tts25"
+# Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+Name = "comfyui-index-tts25"
+DisplayName = "ComfyUI IndexTTS 2.5"
+Icon = ""
