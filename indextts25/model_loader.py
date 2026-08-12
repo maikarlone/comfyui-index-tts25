@@ -2,18 +2,32 @@ import os
 import sys
 import gc
 import torch
-from typing import Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 
 
 class IndexTTS25Loader:
     """
     Lightweight model manager for IndexTTS-2.5.
     - Resolves model root: <ComfyUI>/models/IndexTTS-2.5
+    - Auto-downloads missing main weights via HuggingFace / ModelScope
     - Validates required files
     - Lazy loads vendored indextts.infer_v2_5.IndexTTS2
     """
 
     DEFAULT_DIRNAME = "IndexTTS-2.5"
+    MODEL_REPO = "IndexTeam/IndexTTS-2.5"
+    REQUIRED_FILES = (
+        "config.yaml",
+        "feat1.pt",
+        "feat2.pt",
+        "gpt.pth",
+        "s2mel.pth",
+        "codec.pth",
+        "wav2vec2bert_stats.pt",
+        "multilingual_zh_ja_yue_char_del.tiktoken",
+    )
+    RECOMMENDED_FILES = ("bpe.model", "pinyin.vocab")
+    QWEN_EMO_DIRNAME = "qwen0.6bemo4-merge"
 
     def __init__(
         self,
@@ -22,6 +36,7 @@ class IndexTTS25Loader:
         dtype: Optional[str] = None,
         use_qwen_emo: bool = False,
         use_bf16: Optional[bool] = None,
+        auto_download: Optional[bool] = None,
     ):
         self._models_root = models_root or self._default_models_root()
         self._model_dir = os.path.join(self._models_root, self.DEFAULT_DIRNAME)
@@ -36,16 +51,25 @@ class IndexTTS25Loader:
             dtype = "bf16" if self._use_bf16 else "fp32"
         self._dtype = self._resolve_dtype(dtype)
         self._use_qwen_emo = bool(use_qwen_emo)
+        if auto_download is None:
+            auto_download = os.environ.get("INDEXTTS_NO_AUTO_DOWNLOAD", "").strip().lower() not in (
+                "1", "true", "yes", "on",
+            )
+        self._auto_download = bool(auto_download)
         self._cache: Dict[str, Any] = {}
 
         self._vendor_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")
         self._vendor_pkg_root = os.path.join(self._vendor_root, "indextts")
-        if os.path.isdir(self._vendor_root):
-            try:
-                sys.path.remove(self._vendor_root)
-            except ValueError:
-                pass
-            sys.path.insert(0, self._vendor_root)
+        self._ensure_vendor_on_path()
+
+    def _ensure_vendor_on_path(self) -> None:
+        if not os.path.isdir(self._vendor_root):
+            return
+        try:
+            sys.path.remove(self._vendor_root)
+        except ValueError:
+            pass
+        sys.path.insert(0, self._vendor_root)
 
     @staticmethod
     def _default_models_root() -> str:
@@ -82,26 +106,86 @@ class IndexTTS25Loader:
     def use_qwen_emo(self):
         return self._use_qwen_emo
 
-    def validate(self) -> None:
-        required = [
-            "config.yaml",
-            "feat1.pt",
-            "feat2.pt",
-            "gpt.pth",
-            "s2mel.pth",
-            "codec.pth",
-            "wav2vec2bert_stats.pt",
-            "multilingual_zh_ja_yue_char_del.tiktoken",
+    def _missing_files(self, filenames) -> List[str]:
+        return [
+            f for f in filenames
+            if not os.path.exists(os.path.join(self._model_dir, f))
         ]
-        # bpe.model / pinyin.vocab are commonly present in the HF snapshot; warn only if missing
-        recommended = ["bpe.model", "pinyin.vocab"]
-        missing = [f for f in required if not os.path.exists(os.path.join(self._model_dir, f))]
+
+    def _qwen_emo_ready(self) -> bool:
+        qwen_dir = os.path.join(self._model_dir, self.QWEN_EMO_DIRNAME)
+        if not os.path.isdir(qwen_dir):
+            return False
+        try:
+            return any(os.scandir(qwen_dir))
+        except OSError:
+            return False
+
+    def _download_main_model(self, reason: str) -> None:
+        """Download IndexTeam/IndexTTS-2.5 via HuggingFace Hub or ModelScope."""
+        self._ensure_vendor_on_path()
+        os.makedirs(self._model_dir, exist_ok=True)
+        print(f"[IndexTTS-2.5] {reason}")
+        print(f"[IndexTTS-2.5] Auto-downloading {self.MODEL_REPO} -> {self._model_dir}")
+        print("[IndexTTS-2.5] Source: HuggingFace / ModelScope (network auto-detect)")
+        try:
+            from indextts.utils.model_download import snapshot_download
+            snapshot_download(self.MODEL_REPO, local_dir=self._model_dir)
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to auto-download {self.MODEL_REPO} into {self._model_dir}: {e}. "
+                "You can also run TTS25_download.py manually, or set HF_ENDPOINT="
+                "https://hf-mirror.com / use ModelScope. "
+                "Disable auto-download with INDEXTTS_NO_AUTO_DOWNLOAD=1."
+            ) from e
+
+    def ensure_main_model(self) -> None:
+        """
+        Ensure required main weights exist. If missing and auto_download is enabled,
+        pull IndexTeam/IndexTTS-2.5 with the vendored HF/ModelScope helper.
+        """
+        missing = self._missing_files(self.REQUIRED_FILES)
+        need_qwen = self._use_qwen_emo and not self._qwen_emo_ready()
+
+        if missing or need_qwen:
+            if not self._auto_download:
+                parts = []
+                if missing:
+                    parts.append(f"missing files: {', '.join(missing)}")
+                if need_qwen:
+                    parts.append(f"missing {self.QWEN_EMO_DIRNAME}/ (Emotion Text)")
+                raise FileNotFoundError(
+                    f"IndexTTS-2.5 incomplete in {self._model_dir} ({'; '.join(parts)}). "
+                    "Auto-download is disabled (INDEXTTS_NO_AUTO_DOWNLOAD). "
+                    f"Download from {self.MODEL_REPO} (see TTS25_download.py)."
+                )
+            reason = []
+            if missing:
+                reason.append(f"missing required files: {', '.join(missing)}")
+            if need_qwen:
+                reason.append(f"missing {self.QWEN_EMO_DIRNAME}/ for Emotion Text")
+            self._download_main_model("; ".join(reason))
+
+        still_missing = self._missing_files(self.REQUIRED_FILES)
+        if still_missing:
+            raise FileNotFoundError(
+                f"IndexTTS-2.5 still missing after download in {self._model_dir}: "
+                f"{', '.join(still_missing)}. Check network / HF_ENDPOINT / ModelScope access."
+            )
+        if self._use_qwen_emo and not self._qwen_emo_ready():
+            raise FileNotFoundError(
+                f"Emotion Text requires {self.QWEN_EMO_DIRNAME}/ under {self._model_dir}, "
+                "but it is still missing after download."
+            )
+
+    def validate(self) -> None:
+        missing = self._missing_files(self.REQUIRED_FILES)
         if missing:
             raise FileNotFoundError(
                 f"IndexTTS-2.5 missing files in {self._model_dir}: {', '.join(missing)}. "
-                "Download from IndexTeam/IndexTTS-2.5 (see TTS25_download.py)."
+                f"Download from {self.MODEL_REPO} (see TTS25_download.py)."
             )
-        for f in recommended:
+        for f in self.RECOMMENDED_FILES:
             if not os.path.exists(os.path.join(self._model_dir, f)):
                 print(f"[IndexTTS-2.5] Warning: recommended file missing: {f}")
 
@@ -113,15 +197,10 @@ class IndexTTS25Loader:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        self.validate()
-
         # Ensure our vendor is first on path (may have been displaced by TTS2)
-        if os.path.isdir(self._vendor_root):
-            try:
-                sys.path.remove(self._vendor_root)
-            except ValueError:
-                pass
-            sys.path.insert(0, self._vendor_root)
+        self._ensure_vendor_on_path()
+        self.ensure_main_model()
+        self.validate()
 
         try:
             for k in list(sys.modules.keys()):

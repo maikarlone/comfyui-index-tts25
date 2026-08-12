@@ -67,6 +67,19 @@ Place weights under:
 ComfyUI/models/IndexTTS-2.5/
 ```
 
+### Auto-download on first run
+
+If required main weights are missing when a node runs, the plugin downloads
+`IndexTeam/IndexTTS-2.5` into the path above via **HuggingFace Hub** or
+**ModelScope** (auto-selected by network detection). Auxiliary models under
+`hf_cache/` are still fetched on first load as before.
+
+- Emotion Text also triggers download of `qwen0.6bemo4-merge/` when missing.
+- Disable with: `INDEXTTS_NO_AUTO_DOWNLOAD=1`
+- Optional mirror (HuggingFace path): `HF_ENDPOINT=https://hf-mirror.com`
+
+Manual download is still recommended on slow or restricted networks.
+
 ### One-click download
 
 From this plugin directory:
@@ -104,7 +117,8 @@ modelscope download --model IndexTeam/IndexTTS-2.5 --local_dir ComfyUI/models/In
 
 ### Auto-downloaded auxiliaries (`hf_cache/`)
 
-On first run, IndexTTS may download into `IndexTTS-2.5/hf_cache/`:
+After the main weights are present (local or auto-downloaded), IndexTTS may
+still download into `IndexTTS-2.5/hf_cache/` on first load:
 
 - `w2v-bert-2.0/`
 - `campplus_cn_common.bin`
