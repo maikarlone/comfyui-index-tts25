@@ -30,9 +30,13 @@ from transformers.cache_utils import (
     DynamicCache,
     EncoderDecoderCache,
     OffloadedCache,
-    QuantizedCacheConfig,
     StaticCache,
 )
+
+try:
+    from transformers.cache_utils import QuantizedCacheConfig
+except ImportError:  # transformers>=4.57 removed this symbol
+    QuantizedCacheConfig = None
 from transformers.configuration_utils import PretrainedConfig
 from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.integrations.fsdp import is_fsdp_managed_module
@@ -55,16 +59,83 @@ from transformers.generation.candidate_generator import (
     AssistedCandidateGeneratorDifferentTokenizers,
     CandidateGenerator,
     PromptLookupCandidateGenerator,
-    _crop_past_key_values,
     _prepare_attention_mask,
     _prepare_token_type_ids,
 )
+try:
+    from transformers.generation.candidate_generator import _crop_past_key_values
+except ImportError:  # transformers>=4.57 moved/removed this helper
+    def _crop_past_key_values(model, past_key_values, max_length):
+        """Crops the past key values up to a certain maximum length."""
+        new_past = []
+        if isinstance(past_key_values, Cache):
+            past_key_values.crop(max_length)
+        elif model.config.is_encoder_decoder:
+            for idx in range(len(past_key_values)):
+                new_past.append(
+                    (
+                        past_key_values[idx][0][:, :, :max_length, :],
+                        past_key_values[idx][1][:, :, :max_length, :],
+                        past_key_values[idx][2],
+                        past_key_values[idx][3],
+                    )
+                )
+            past_key_values = tuple(new_past)
+        elif "gptbigcode" in model.__class__.__name__.lower() or (
+            model.config.architectures is not None and "gptbigcode" in model.config.architectures[0].lower()
+        ):
+            if model.config.multi_query:
+                for idx in range(len(past_key_values)):
+                    past_key_values[idx] = past_key_values[idx][:, :max_length, :]
+            else:
+                for idx in range(len(past_key_values)):
+                    past_key_values[idx] = past_key_values[idx][:, :, :max_length, :]
+        elif past_key_values is not None:
+            for idx in range(len(past_key_values)):
+                if past_key_values[idx] != ([], []):
+                    new_past.append(
+                        (
+                            past_key_values[idx][0][:, :, :max_length, :],
+                            past_key_values[idx][1][:, :, :max_length, :],
+                        )
+                    )
+                else:
+                    new_past.append((past_key_values[idx][0], past_key_values[idx][1]))
+            past_key_values = tuple(new_past)
+        return past_key_values
+
 from transformers.generation.configuration_utils import (
-    NEED_SETUP_CACHE_CLASSES_MAPPING,
-    QUANT_BACKEND_CLASSES_MAPPING,
     GenerationConfig,
     GenerationMode,
 )
+try:
+    from transformers.generation.configuration_utils import (
+        NEED_SETUP_CACHE_CLASSES_MAPPING,
+        QUANT_BACKEND_CLASSES_MAPPING,
+    )
+except ImportError:  # transformers>=4.57
+    from transformers.cache_utils import (
+        HQQQuantizedCache,
+        HybridCache,
+        HybridChunkedCache,
+        OffloadedHybridCache,
+        OffloadedStaticCache,
+        QuantoQuantizedCache,
+        SlidingWindowCache,
+    )
+    NEED_SETUP_CACHE_CLASSES_MAPPING = {
+        "static": StaticCache,
+        "offloaded_static": OffloadedStaticCache,
+        "sliding_window": SlidingWindowCache,
+        "hybrid": HybridCache,
+        "hybrid_chunked": HybridChunkedCache,
+        "offloaded_hybrid": OffloadedHybridCache,
+        "offloaded_hybrid_chunked": OffloadedHybridCache,
+    }
+    QUANT_BACKEND_CLASSES_MAPPING = {
+        "quanto": QuantoQuantizedCache,
+        "HQQ": HQQQuantizedCache,
+    }
 from transformers.generation.logits_process import (
     EncoderNoRepeatNGramLogitsProcessor,
     EncoderRepetitionPenaltyLogitsProcessor,
@@ -1002,7 +1073,7 @@ class GenerationMixin:
                     device=device,
                 )
             )
-        if generation_config.forced_decoder_ids is not None:
+        if getattr(generation_config, "forced_decoder_ids", None) is not None:
             # TODO (sanchit): move this exception to GenerationConfig.validate() when TF & FLAX are aligned with PT
             raise ValueError(
                 "You have explicitly specified `forced_decoder_ids`. Please remove the `forced_decoder_ids` argument "
@@ -1736,6 +1807,11 @@ class GenerationMixin:
                     model_kwargs=model_kwargs,
                 )
             elif generation_config.cache_implementation == "quantized":
+                if QuantizedCacheConfig is None:
+                    raise ValueError(
+                        "Quantized KV cache requires transformers with QuantizedCacheConfig "
+                        "(e.g. transformers==4.52.1). Your transformers build no longer provides it."
+                    )
                 if not self._supports_quantized_cache:
                     raise ValueError(
                         "This model does not support the quantized cache. If you want your model to support quantized "

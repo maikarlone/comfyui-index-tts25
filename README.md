@@ -111,9 +111,10 @@ modelscope download --model IndexTeam/IndexTTS-2.5 --local_dir ComfyUI/models/In
 
 ### Recommended
 
-- `bpe.model`, `pinyin.vocab`
 - `qwen0.6bemo4-merge/` — required for **Emotion Text** node
 - `glossary.yaml` — optional pronunciation glossary
+
+> Note: `bpe.model` / `pinyin.vocab` belong to older IndexTTS-2 and are **not** required for 2.5 (tokenizer is `multilingual_zh_ja_yue_char_del.tiktoken`).
 
 ### Auto-downloaded auxiliaries (`hf_cache/`)
 

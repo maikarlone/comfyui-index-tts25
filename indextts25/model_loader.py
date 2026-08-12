@@ -26,7 +26,8 @@ class IndexTTS25Loader:
         "wav2vec2bert_stats.pt",
         "multilingual_zh_ja_yue_char_del.tiktoken",
     )
-    RECOMMENDED_FILES = ("bpe.model", "pinyin.vocab")
+    # IndexTTS-2.5 uses multilingual tiktoken; bpe.model/pinyin.vocab are IndexTTS-2 leftovers.
+    RECOMMENDED_FILES = ()
     QWEN_EMO_DIRNAME = "qwen0.6bemo4-merge"
 
     def __init__(

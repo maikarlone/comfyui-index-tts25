@@ -26,10 +26,11 @@ Required (validated by the loader):
 
 Recommended:
 
-  bpe.model
-  pinyin.vocab
   qwen0.6bemo4-merge/               # required for Emotion Text node
   glossary.yaml                     # optional
+
+  # NOT required for IndexTTS-2.5:
+  # bpe.model / pinyin.vocab (IndexTTS-2 only)
 
 Auxiliary models (auto-downloaded into hf_cache/ on first run):
 
