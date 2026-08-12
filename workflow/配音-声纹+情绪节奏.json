@@ -1,0 +1,68 @@
+{
+  "168": {
+    "inputs": {
+      "audio": "003.wav",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "声纹参考（音色）"
+    }
+  },
+  "196": {
+    "inputs": {
+      "audio": "声音情绪节奏参考.MP3",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "情绪节奏参考"
+    }
+  },
+  "197": {
+    "inputs": {
+      "filename_prefix": "audio/IndexTTS25",
+      "quality": "q90",
+      "audioUI": "",
+      "audio": [
+        "211",
+        0
+      ]
+    },
+    "class_type": "SaveAudioMP3",
+    "_meta": {
+      "title": "保存音频"
+    }
+  },
+  "211": {
+    "inputs": {
+      "text": "在这里输入要配音的文案。",
+      "reference_audio": [
+        "168",
+        0
+      ],
+      "lang": "ZH",
+      "duration_factor": 1.0,
+      "mode": "Auto",
+      "do_sample_mode": "on",
+      "temperature": 0.8,
+      "top_p": 0.9,
+      "top_k": 30,
+      "num_beams": 3,
+      "repetition_penalty": 10,
+      "length_penalty": 0,
+      "max_mel_tokens": 1815,
+      "max_tokens_per_sentence": 120,
+      "seed": 3241611636,
+      "emo_ref_audio": [
+        "196",
+        0
+      ],
+      "emotion_weight": 0.5
+    },
+    "class_type": "IndexTTS25EmotionAudioNode",
+    "_meta": {
+      "title": "Index TTS 2.5 - Emotion Audio（声纹+情绪）"
+    }
+  }
+}

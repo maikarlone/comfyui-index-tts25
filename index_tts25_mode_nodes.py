@@ -41,9 +41,15 @@ class _IndexTTS25BaseMixin:
     def _base_inputs(cls):
         return {
             "text": ("STRING", {"multiline": True, "default": "Hello, this is IndexTTS 2.5."}),
-            "reference_audio": ("AUDIO",),
+            "reference_audio": ("AUDIO", {"tooltip": "声纹/音色参考（决定说谁的声音）"}),
             "lang": (_LANG_CHOICES, {"default": "ZH"}),
-            "duration_factor": ("FLOAT", {"default": 1.0, "min": 0.5, "max": 2.0, "step": 0.05}),
+            "duration_factor": ("FLOAT", {
+                "default": 1.0,
+                "min": 0.5,
+                "max": 2.0,
+                "step": 0.05,
+                "tooltip": "语速：>1 更慢，<1 更快",
+            }),
             "mode": (["Auto", "Duration", "Tokens"], {"default": "Auto"}),
         }
 
@@ -144,8 +150,16 @@ class IndexTTS25EmotionAudioNode(_IndexTTS25BaseMixin):
     def INPUT_TYPES(cls):
         opt = cls._common_optional().copy()
         opt.update({
-            "emo_ref_audio": ("AUDIO",),
-            "emotion_weight": ("FLOAT", {"default": 0.8, "min": 0.0, "max": 1.4, "step": 0.05}),
+            "emo_ref_audio": ("AUDIO", {
+                "tooltip": "情绪/节奏参考音频（对应 2.0 的 emo_ref_audio；不影响音色，音色由 reference_audio 决定）",
+            }),
+            "emotion_weight": ("FLOAT", {
+                "default": 0.5,
+                "min": 0.0,
+                "max": 1.4,
+                "step": 0.05,
+                "tooltip": "情绪参考强度；配音常用 0.4~0.65，过高可能把参考音频的语速也带进来",
+            }),
         })
         return {"required": cls._base_inputs(), "optional": opt}
 
