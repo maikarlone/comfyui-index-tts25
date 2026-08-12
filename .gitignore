@@ -25,3 +25,5 @@ hf_cache/
 TimbreModel/*
 !TimbreModel/.gitkeep
 !.gitkeep
+# Ignore local Actions until token has workflow scope
+.github/
