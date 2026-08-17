@@ -190,10 +190,18 @@ class IndexTTS25Loader:
             if not os.path.exists(os.path.join(self._model_dir, f)):
                 print(f"[IndexTTS-2.5] Warning: recommended file missing: {f}")
 
-    def get_tts(self):
+    def get_tts(self, already_locked: bool = False):
         """
         Return a cached instance of indextts.infer_v2_5.IndexTTS2.
         """
+        from .utils import TTS_INFER_LOCK
+
+        if already_locked:
+            return self._get_tts_unlocked()
+        with TTS_INFER_LOCK:
+            return self._get_tts_unlocked()
+
+    def _get_tts_unlocked(self):
         cache_key = f"tts_qwen{int(self._use_qwen_emo)}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -243,8 +251,17 @@ class IndexTTS25Loader:
         self._cache["tts"] = tts  # alias for unload
         return tts
 
-    def unload_tts(self) -> None:
+    def unload_tts(self, already_locked: bool = False) -> None:
         """Best-effort unload of cached TTS instance and free GPU cache."""
+        from .utils import TTS_INFER_LOCK
+
+        if already_locked:
+            self._unload_tts_unlocked()
+            return
+        with TTS_INFER_LOCK:
+            self._unload_tts_unlocked()
+
+    def _unload_tts_unlocked(self) -> None:
         try:
             for k in list(self._cache.keys()):
                 if k.startswith("tts"):

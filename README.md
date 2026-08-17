@@ -168,7 +168,7 @@ See also [`MODEL_PATHS.txt`](MODEL_PATHS.txt).
 ### Emotion examples
 
 - **Emotion Audio**: connect a second clip that carries the desired emotion; tune `emotion_weight`.
-- **Emotion Vector**: raise one or more of Happy / Angry / Sad / … (normalized internally).
+- **Emotion Vector**: raise one or more of Happy / Angry / Sad / …. Values are clamped, soft-capped if the sum exceeds **1.5**, then scaled to **sum ≤ 0.8** (upstream-compatible). All-zero falls back to Neutral.
 - **Emotion Text**: describe emotion in words; keep `emotion_weight` around `0.6` for natural results.
 
 ### Speaking speed
@@ -199,6 +199,7 @@ Use structured tags:
 
 Connect narrator + character reference audios to **Index TTS 2.5 Pro**.
 
+`Subtitle` / `SimplifiedSubtitle` use **per-segment generated durations** (not Whisper word-level alignment).
 ## Project layout
 
 ```text

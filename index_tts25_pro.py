@@ -1,6 +1,5 @@
 """
-IndexTTS 2.5 Pro Node - 多角色小说朗读节点
-支持 IndexTTS-2.5 模型的多角色语音合成（含语言与语速控制）
+IndexTTS 2.5 Pro Node - multi-character novel reading
 """
 
 import json
@@ -10,12 +9,13 @@ import torch
 from typing import Any, Tuple, Optional, List
 
 from .indextts25 import IndexTTS25Loader, IndexTTS25Engine
+from .indextts25.utils import process_comfy_audio
 
 _LANG_CHOICES = ["ZH", "EN", "JA", "ES", "AR"]
 
 
 class IndexTTS25ProNode:
-    """ComfyUI IndexTTS 2.5 Pro：多角色小说朗读"""
+    """ComfyUI IndexTTS 2.5 Pro: multi-character novel TTS"""
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -28,18 +28,24 @@ class IndexTTS25ProNode:
                         "default": "<Narrator>这是一段旁白文本。<Character1>你好，我是角色1。<Narrator>他说道。",
                     },
                 ),
-                "narrator_audio": ("AUDIO", {"description": "正文/旁白的参考音频"}),
+                "narrator_audio": ("AUDIO", {"tooltip": "Narrator / body-text reference audio"}),
                 "lang": (_LANG_CHOICES, {"default": "ZH"}),
-                "duration_factor": ("FLOAT", {"default": 1.0, "min": 0.5, "max": 2.0, "step": 0.05}),
+                "duration_factor": ("FLOAT", {
+                    "default": 1.0,
+                    "min": 0.5,
+                    "max": 2.0,
+                    "step": 0.05,
+                    "tooltip": "Speaking speed: >1 slower, <1 faster",
+                }),
                 "mode": (["Auto", "Duration", "Tokens"], {"default": "Auto"}),
             },
             "optional": {
-                "character1_audio": ("AUDIO", {"description": "角色1的参考音频"}),
-                "character2_audio": ("AUDIO", {"description": "角色2的参考音频"}),
-                "character3_audio": ("AUDIO", {"description": "角色3的参考音频"}),
-                "character4_audio": ("AUDIO", {"description": "角色4的参考音频"}),
-                "character5_audio": ("AUDIO", {"description": "角色5的参考音频"}),
-                "emotion_audio": ("AUDIO", {"description": "情感参考音频（可选）"}),
+                "character1_audio": ("AUDIO", {"tooltip": "Character1 reference audio"}),
+                "character2_audio": ("AUDIO", {"tooltip": "Character2 reference audio"}),
+                "character3_audio": ("AUDIO", {"tooltip": "Character3 reference audio"}),
+                "character4_audio": ("AUDIO", {"tooltip": "Character4 reference audio"}),
+                "character5_audio": ("AUDIO", {"tooltip": "Character5 reference audio"}),
+                "emotion_audio": ("AUDIO", {"tooltip": "Optional emotion/rhythm reference audio"}),
                 "emotion_weight": ("FLOAT", {"default": 0.8, "min": 0.0, "max": 1.4, "step": 0.05}),
                 "do_sample_mode": (["off", "on"], {"default": "on"}),
                 "temperature": ("FLOAT", {"default": 0.8, "min": 0.1, "max": 2.0, "step": 0.05}),
@@ -50,7 +56,12 @@ class IndexTTS25ProNode:
                 "length_penalty": ("FLOAT", {"default": 0.0, "min": -2.0, "max": 2.0, "step": 0.1}),
                 "max_mel_tokens": ("INT", {"default": 1815, "min": 50, "max": 1815, "step": 5}),
                 "max_tokens_per_sentence": ("INT", {"default": 120, "min": 0, "max": 600, "step": 5}),
-                "seed": ("INT", {"default": 0, "min": 0, "max": 2**32 - 1}),
+                "seed": ("INT", {
+                    "default": 0,
+                    "min": 0,
+                    "max": 2**32 - 1,
+                    "tooltip": "Random seed. 0 = do not force. Most effective when do_sample_mode=on.",
+                }),
                 "cache_control": ("DICT", {"default": None}),
             },
         }
@@ -67,31 +78,7 @@ class IndexTTS25ProNode:
 
     @staticmethod
     def _process_audio_input(audio: Any) -> Optional[Tuple[np.ndarray, int]]:
-        if audio is None:
-            return None
-        if isinstance(audio, dict) and "waveform" in audio and "sample_rate" in audio:
-            wave = audio["waveform"]
-            sr = int(audio["sample_rate"])
-            if isinstance(wave, torch.Tensor):
-                if wave.dim() == 3:
-                    wave = wave[0, 0].detach().cpu().numpy()
-                elif wave.dim() == 1:
-                    wave = wave.detach().cpu().numpy()
-                else:
-                    wave = wave.flatten().detach().cpu().numpy()
-            elif isinstance(wave, np.ndarray):
-                if wave.ndim == 3:
-                    wave = wave[0, 0]
-                elif wave.ndim == 2:
-                    wave = wave[0]
-            return wave.astype(np.float32), sr
-        elif isinstance(audio, tuple) and len(audio) == 2:
-            wave, sr = audio
-            if isinstance(wave, torch.Tensor):
-                wave = wave.detach().cpu().numpy()
-            return wave.astype(np.float32), int(sr)
-        else:
-            raise ValueError("AUDIO input must be ComfyUI dict or (wave, sr)")
+        return process_comfy_audio(audio, allow_none=True)
 
     def _parse_structured_text(self, structured_text: str) -> List[Tuple[str, str]]:
         segments = []
@@ -112,23 +99,6 @@ class IndexTTS25ProNode:
         seconds_int = int(remaining_seconds)
         milliseconds = int((remaining_seconds - seconds_int) * 1000)
         return f"{minutes}:{seconds_int:02d}.{milliseconds:03d}"
-
-    def _parse_time_format(self, time_str: str) -> float:
-        if "." in time_str:
-            time_part, ms_part = time_str.split(".")
-            parts = time_part.split(":")
-            if len(parts) == 2:
-                minutes = int(parts[0])
-                seconds = int(parts[1])
-                milliseconds = int(ms_part[:3].ljust(3, "0"))
-                return minutes * 60 + seconds + milliseconds / 1000.0
-        else:
-            parts = time_str.split(":")
-            if len(parts) == 2:
-                minutes = int(parts[0])
-                seconds = int(parts[1])
-                return minutes * 60 + seconds
-        return 0.0
 
     def generate_multi_voice_speech(
         self,
@@ -168,7 +138,7 @@ class IndexTTS25ProNode:
                 if char_audio is not None:
                     character_audios[f"Character{i}"] = char_audio
 
-            emo_ref = self._process_audio_input(emotion_audio) if emotion_audio else None
+            emo_ref = self._process_audio_input(emotion_audio)
 
             audio_segments = []
             subtitle_data = []
@@ -232,29 +202,11 @@ class IndexTTS25ProNode:
             audio_output = {"waveform": wave_tensor, "sample_rate": int(sample_rate)}
             subtitle_json = json.dumps(subtitle_data, ensure_ascii=False, indent=2)
 
+            # Use real per-segment timestamps (same as Subtitle), not equal-time estimates.
             simplified_subtitles = []
             for item in subtitle_data:
-                start_time = item["start"]
-                end_time = item["end"]
-                text = item["字幕"]
-                sentences = re.split(r"([,，.。!！?？;；])", text)
-                sentences = (
-                    [s + next_s for s, next_s in zip(sentences[::2], sentences[1::2] + [""])]
-                    if len(sentences) > 1
-                    else [text]
-                )
-                sentences = [s for s in sentences if s.strip()] or [text]
-                total_dur = self._parse_time_format(end_time) - self._parse_time_format(start_time)
-                sentence_duration = total_dur / len(sentences) if sentences else total_dur
-                for i, sentence in enumerate(sentences):
-                    if not sentence.strip():
-                        continue
-                    sub_start = self._parse_time_format(start_time) + i * sentence_duration
-                    sub_end = sub_start + sentence_duration
-                    simplified_subtitles.append(
-                        f">> {self._seconds_to_time_format(sub_start)}-{self._seconds_to_time_format(sub_end)}"
-                    )
-                    simplified_subtitles.append(f">> {sentence}")
+                simplified_subtitles.append(f">> {item['start']}-{item['end']}")
+                simplified_subtitles.append(f">> {item['字幕']}")
 
             try:
                 keep = bool(cache_control.get("keep_cached")) if isinstance(cache_control, dict) else False

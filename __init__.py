@@ -40,7 +40,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "TimbreAudioLoader": "Timbre Audio Loader",
     "NovelTextStructureNode": "Novel Text Structure",
     "IndexTTS25BaseNode": "Index TTS 2.5 - Base",
-    "IndexTTS25EmotionAudioNode": "Index TTS 2.5 - Emotion Audio (声纹+情绪节奏)",
+    "IndexTTS25EmotionAudioNode": "Index TTS 2.5 - Emotion Audio",
     "IndexTTS25EmotionVectorNode": "Index TTS 2.5 - Emotion Vector",
     "IndexTTS25EmotionTextNode": "Index TTS 2.5 - Emotion Text",
     "IndexTTS25CacheControlNode": "Index TTS 2.5 - Cache Control",

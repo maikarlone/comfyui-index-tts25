@@ -1,9 +1,29 @@
 import json
+import random
+import warnings
+from typing import List, Optional, Tuple
+
 import numpy as np
-from typing import Optional, Tuple, List
 
 from .model_loader import IndexTTS25Loader
-from .utils import save_temp_wav
+from .utils import TTS_INFER_LOCK, cleanup_temp_paths, save_temp_wav
+
+
+def _apply_seed(seed: int) -> None:
+    """Fix RNGs when seed != 0. seed == 0 leaves randomness alone."""
+    if not seed:
+        return
+    seed = int(seed) & 0xFFFFFFFF
+    random.seed(seed)
+    np.random.seed(seed)
+    try:
+        import torch
+
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+    except Exception as e:
+        warnings.warn(f"[IndexTTS-2.5] Failed to set torch seed: {e}")
 
 
 class IndexTTS25Engine:
@@ -45,12 +65,73 @@ class IndexTTS25Engine:
         verbose: bool = False,
         return_subtitles: bool = True,
     ) -> Tuple[int, np.ndarray, Optional[str]]:
+        with TTS_INFER_LOCK:
+            return self._generate_locked(
+                text=text,
+                reference_audio=reference_audio,
+                lang=lang,
+                duration_factor=duration_factor,
+                style_text=style_text,
+                style_audio=style_audio,
+                mode=mode,
+                duration_sec=duration_sec,
+                token_count=token_count,
+                do_sample=do_sample,
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k,
+                num_beams=num_beams,
+                repetition_penalty=repetition_penalty,
+                length_penalty=length_penalty,
+                max_mel_tokens=max_mel_tokens,
+                max_tokens_per_sentence=max_tokens_per_sentence,
+                emotion_control_method=emotion_control_method,
+                emo_text=emo_text,
+                emo_ref_audio=emo_ref_audio,
+                emo_vector=emo_vector,
+                emo_weight=emo_weight,
+                seed=seed,
+                use_qwen=use_qwen,
+                verbose=verbose,
+                return_subtitles=return_subtitles,
+            )
+
+    def _generate_locked(
+        self,
+        text: str,
+        reference_audio: Optional[Tuple[np.ndarray, int]] = None,
+        lang: str = "ZH",
+        duration_factor: float = 1.0,
+        style_text: Optional[str] = None,
+        style_audio: Optional[Tuple[np.ndarray, int]] = None,
+        mode: str = "Auto",
+        duration_sec: Optional[float] = None,
+        token_count: Optional[int] = None,
+        do_sample: bool = False,
+        temperature: float = 0.8,
+        top_p: float = 0.9,
+        top_k: int = 30,
+        num_beams: int = 3,
+        repetition_penalty: float = 10.0,
+        length_penalty: float = 0.0,
+        max_mel_tokens: int = 1500,
+        max_tokens_per_sentence: int = 120,
+        emotion_control_method: Optional[str] = None,
+        emo_text: Optional[str] = None,
+        emo_ref_audio: Optional[Tuple[np.ndarray, int]] = None,
+        emo_vector: Optional[List[float]] = None,
+        emo_weight: float = 0.8,
+        seed: int = 0,
+        use_qwen: bool = False,
+        verbose: bool = False,
+        return_subtitles: bool = True,
+    ) -> Tuple[int, np.ndarray, Optional[str]]:
         # If emotion-text is requested but loader has no Qwen, rebuild with Qwen enabled
         need_qwen = bool(use_qwen) or (
             emo_text is not None and str(emo_text).strip() != "" and emo_ref_audio is None and not emo_vector
         )
         if need_qwen and not self.loader.use_qwen_emo:
-            self.loader.unload_tts()
+            self.loader.unload_tts(already_locked=True)
             self.loader = IndexTTS25Loader(
                 models_root=self.loader._models_root,
                 device=str(self.loader.device),
@@ -58,76 +139,83 @@ class IndexTTS25Engine:
                 use_bf16=self.loader._use_bf16,
             )
 
-        tts = self.loader.get_tts()
+        tts = self.loader.get_tts(already_locked=True)
 
         if reference_audio is None:
             raise ValueError("reference_audio is required for IndexTTS-2.5")
-        spk_wav_path = save_temp_wav(reference_audio)
 
+        spk_wav_path = None
         emo_wav_path = None
-        if emo_ref_audio is not None:
-            emo_wav_path = save_temp_wav(emo_ref_audio)
-        elif style_audio is not None:
-            emo_wav_path = save_temp_wav(style_audio)
+        try:
+            spk_wav_path = save_temp_wav(reference_audio)
 
-        _max_mel_tokens = int(max_mel_tokens) if max_mel_tokens else 1500
-        gen_kwargs = dict(
-            do_sample=bool(do_sample),
-            top_p=float(top_p),
-            top_k=int(top_k),
-            temperature=float(temperature),
-            length_penalty=float(length_penalty),
-            num_beams=int(num_beams),
-            repetition_penalty=float(repetition_penalty),
-            max_mel_tokens=int(_max_mel_tokens),
-        )
+            if emo_ref_audio is not None:
+                emo_wav_path = save_temp_wav(emo_ref_audio)
+            elif style_audio is not None:
+                emo_wav_path = save_temp_wav(style_audio)
 
-        use_emo_text = False
-        _emo_text = None
-        if emo_wav_path is None and (emo_vector is None or len(emo_vector) == 0):
-            if (use_qwen or need_qwen) and emo_text and str(emo_text).strip():
-                use_emo_text = True
-                _emo_text = emo_text
-            elif use_qwen and not (emo_text and str(emo_text).strip()):
-                # use text itself for emotion when use_qwen without explicit emo_text
-                use_emo_text = True
-                _emo_text = None
+            _max_mel_tokens = int(max_mel_tokens) if max_mel_tokens else 1500
+            gen_kwargs = dict(
+                do_sample=bool(do_sample),
+                top_p=float(top_p),
+                top_k=int(top_k),
+                temperature=float(temperature),
+                length_penalty=float(length_penalty),
+                num_beams=int(num_beams),
+                repetition_penalty=float(repetition_penalty),
+                max_mel_tokens=int(_max_mel_tokens),
+            )
 
-        lang = (lang or "ZH").upper().strip()
-        duration_factor = float(max(0.5, min(2.0, float(duration_factor))))
+            use_emo_text = False
+            _emo_text = None
+            if emo_wav_path is None and (emo_vector is None or len(emo_vector) == 0):
+                if (use_qwen or need_qwen) and emo_text and str(emo_text).strip():
+                    use_emo_text = True
+                    _emo_text = emo_text
+                elif use_qwen and not (emo_text and str(emo_text).strip()):
+                    # use text itself for emotion when use_qwen without explicit emo_text
+                    use_emo_text = True
+                    _emo_text = None
 
-        result = tts.infer(
-            spk_audio_prompt=spk_wav_path,
-            text=text,
-            output_path=None,
-            lang=lang,
-            emo_audio_prompt=emo_wav_path,
-            emo_alpha=float(emo_weight),
-            emo_vector=emo_vector if (emo_wav_path is None and emo_vector) else None,
-            use_emo_text=bool(use_emo_text),
-            emo_text=_emo_text,
-            use_random=False,
-            interval_silence=200,
-            verbose=bool(verbose),
-            max_text_tokens_per_segment=int(max_tokens_per_sentence) if max_tokens_per_sentence else 120,
-            duration_factor=duration_factor,
-            **gen_kwargs,
-        )
+            lang = (lang or "ZH").upper().strip()
+            duration_factor = float(max(0.5, min(2.0, float(duration_factor))))
 
-        if not (isinstance(result, tuple) and len(result) == 2):
-            raise RuntimeError(f"Unexpected return from IndexTTS2.5.infer: {type(result)}")
+            _apply_seed(int(seed) if seed is not None else 0)
 
-        sr, wav = result
-        wav = np.asarray(wav)
-        if wav.ndim == 2:
-            wav = wav.mean(axis=1)
-        wav = (wav.astype(np.float32) / 32768.0).clip(-1.0, 1.0)
+            result = tts.infer(
+                spk_audio_prompt=spk_wav_path,
+                text=text,
+                output_path=None,
+                lang=lang,
+                emo_audio_prompt=emo_wav_path,
+                emo_alpha=float(emo_weight),
+                emo_vector=emo_vector if (emo_wav_path is None and emo_vector) else None,
+                use_emo_text=bool(use_emo_text),
+                emo_text=_emo_text,
+                use_random=False,
+                interval_silence=200,
+                verbose=bool(verbose),
+                max_text_tokens_per_segment=int(max_tokens_per_sentence) if max_tokens_per_sentence else 120,
+                duration_factor=duration_factor,
+                **gen_kwargs,
+            )
 
-        subtitle = None
-        if return_subtitles:
-            duration = len(wav) / float(sr)
-            subtitle = json.dumps([
-                {"id": "Narrator", "字幕": text, "start": 0.0, "end": round(duration, 2)}
-            ], ensure_ascii=False)
+            if not (isinstance(result, tuple) and len(result) == 2):
+                raise RuntimeError(f"Unexpected return from IndexTTS2.5.infer: {type(result)}")
 
-        return int(sr), wav, subtitle
+            sr, wav = result
+            wav = np.asarray(wav)
+            if wav.ndim == 2:
+                wav = wav.mean(axis=1)
+            wav = (wav.astype(np.float32) / 32768.0).clip(-1.0, 1.0)
+
+            subtitle = None
+            if return_subtitles:
+                duration = len(wav) / float(sr)
+                subtitle = json.dumps([
+                    {"id": "Narrator", "字幕": text, "start": 0.0, "end": round(duration, 2)}
+                ], ensure_ascii=False)
+
+            return int(sr), wav, subtitle
+        finally:
+            cleanup_temp_paths(spk_wav_path, emo_wav_path)

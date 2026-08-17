@@ -1,54 +1,40 @@
 import torch
-import numpy as np
 from typing import Any, Tuple
 
 from .indextts25 import IndexTTS25Loader, IndexTTS25Engine
+from .indextts25.utils import normalize_emotion_vector, process_comfy_audio
 
 _GLOBAL_LOADER = IndexTTS25Loader(use_qwen_emo=False)
 _GLOBAL_ENGINE = IndexTTS25Engine(_GLOBAL_LOADER)
 
 _LANG_CHOICES = ["ZH", "EN", "JA", "ES", "AR"]
 
+_EMO_SLIDER = {
+    "default": 0.0,
+    "min": 0.0,
+    "max": 1.4,
+    "step": 0.01,
+    "tooltip": "Emotion strength for this dimension. Prefer total sum <= 1.5; values are auto-capped then scaled to sum<=0.8.",
+}
+
 
 class _IndexTTS25BaseMixin:
     @staticmethod
-    def _process_audio_input(audio: Any) -> Tuple[np.ndarray, int]:
-        if isinstance(audio, dict) and "waveform" in audio and "sample_rate" in audio:
-            wave = audio["waveform"]
-            sr = int(audio["sample_rate"])
-            if isinstance(wave, torch.Tensor):
-                if wave.dim() == 3:
-                    wave = wave[0, 0].detach().cpu().numpy()
-                elif wave.dim() == 1:
-                    wave = wave.detach().cpu().numpy()
-                else:
-                    wave = wave.flatten().detach().cpu().numpy()
-            elif isinstance(wave, np.ndarray):
-                if wave.ndim == 3:
-                    wave = wave[0, 0]
-                elif wave.ndim == 2:
-                    wave = wave[0]
-            return wave.astype(np.float32), sr
-        elif isinstance(audio, tuple) and len(audio) == 2:
-            wave, sr = audio
-            if isinstance(wave, torch.Tensor):
-                wave = wave.detach().cpu().numpy()
-            return wave.astype(np.float32), int(sr)
-        else:
-            raise ValueError("AUDIO input must be ComfyUI dict or (wave, sr)")
+    def _process_audio_input(audio: Any) -> Tuple:
+        return process_comfy_audio(audio, allow_none=False)
 
     @classmethod
     def _base_inputs(cls):
         return {
             "text": ("STRING", {"multiline": True, "default": "Hello, this is IndexTTS 2.5."}),
-            "reference_audio": ("AUDIO", {"tooltip": "声纹/音色参考（决定说谁的声音）"}),
+            "reference_audio": ("AUDIO", {"tooltip": "Voice timbre reference (who speaks)"}),
             "lang": (_LANG_CHOICES, {"default": "ZH"}),
             "duration_factor": ("FLOAT", {
                 "default": 1.0,
                 "min": 0.5,
                 "max": 2.0,
                 "step": 0.05,
-                "tooltip": "语速：>1 更慢，<1 更快",
+                "tooltip": "Speaking speed: >1 slower, <1 faster",
             }),
             "mode": (["Auto", "Duration", "Tokens"], {"default": "Auto"}),
         }
@@ -65,7 +51,12 @@ class _IndexTTS25BaseMixin:
             "length_penalty": ("FLOAT", {"default": 0.0, "min": -2.0, "max": 2.0, "step": 0.1}),
             "max_mel_tokens": ("INT", {"default": 1815, "min": 50, "max": 1815, "step": 5}),
             "max_tokens_per_sentence": ("INT", {"default": 120, "min": 0, "max": 600, "step": 5}),
-            "seed": ("INT", {"default": 0, "min": 0, "max": 2**32 - 1}),
+            "seed": ("INT", {
+                "default": 0,
+                "min": 0,
+                "max": 2**32 - 1,
+                "tooltip": "Random seed. 0 = do not force. Most effective when do_sample_mode=on.",
+            }),
             "cache_control": ("DICT", {"default": None}),
         }
 
@@ -151,14 +142,14 @@ class IndexTTS25EmotionAudioNode(_IndexTTS25BaseMixin):
         opt = cls._common_optional().copy()
         opt.update({
             "emo_ref_audio": ("AUDIO", {
-                "tooltip": "情绪/节奏参考音频（对应 2.0 的 emo_ref_audio；不影响音色，音色由 reference_audio 决定）",
+                "tooltip": "Emotion/rhythm reference audio (timbre still comes from reference_audio)",
             }),
             "emotion_weight": ("FLOAT", {
                 "default": 0.5,
                 "min": 0.0,
                 "max": 1.4,
                 "step": 0.05,
-                "tooltip": "情绪参考强度；配音常用 0.4~0.65，过高可能把参考音频的语速也带进来",
+                "tooltip": "Emotion reference strength; dubbing often uses 0.4~0.65",
             }),
         })
         return {"required": cls._base_inputs(), "optional": opt}
@@ -227,14 +218,14 @@ class IndexTTS25EmotionVectorNode(_IndexTTS25BaseMixin):
     def INPUT_TYPES(cls):
         opt = cls._common_optional().copy()
         opt.update({
-            "Happy": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Angry": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Sad": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Fear": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Hate": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Love": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Surprise": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
-            "Neutral": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.4, "step": 0.01}),
+            "Happy": ("FLOAT", dict(_EMO_SLIDER)),
+            "Angry": ("FLOAT", dict(_EMO_SLIDER)),
+            "Sad": ("FLOAT", dict(_EMO_SLIDER)),
+            "Fear": ("FLOAT", dict(_EMO_SLIDER)),
+            "Hate": ("FLOAT", dict(_EMO_SLIDER)),
+            "Love": ("FLOAT", dict(_EMO_SLIDER)),
+            "Surprise": ("FLOAT", dict(_EMO_SLIDER)),
+            "Neutral": ("FLOAT", dict(_EMO_SLIDER)),
         })
         return {"required": cls._base_inputs(), "optional": opt}
 
@@ -275,9 +266,9 @@ class IndexTTS25EmotionVectorNode(_IndexTTS25BaseMixin):
         cache_control=None,
     ):
         ref = self._process_audio_input(reference_audio)
-        vec = [Happy, Angry, Sad, Fear, Hate, Love, Surprise, Neutral]
-        s = float(sum(max(0.0, float(x)) for x in vec))
-        emo_vec = ([float(max(0.0, float(x))) / s for x in vec] if s > 0 else [0.0] * 7 + [1.0])
+        emo_vec = normalize_emotion_vector(
+            [Happy, Angry, Sad, Fear, Hate, Love, Surprise, Neutral]
+        )
         out = self._do_generate(
             self.engine,
             text=text,
